@@ -1,11 +1,6 @@
 h1= title
 table
 	thead
-		tr
-			- for(i=0; i<records[0].length; i++)
-				th=records[0][i]
-		- each record, j in records
-			tr
-				td
-					-if(j!=0)
-						#{record.url}
+			- for(i=0; i<records.length; i++)
+				tr
+					th=records[i]

@@ -1,28 +1,3 @@
-/*
-** (The MIT License)
-** 
-** Copyright (c) 2011 Sanjay Gidwani &lt;sanjay.gidwani@gmail.com&gt;
-** 
-** Permission is hereby granted, free of charge, to any person obtaining
-** a copy of this software and associated documentation files (the
-** 'Software'), to deal in the Software without restriction, including
-** without limitation the rights to use, copy, modify, merge, publish,
-** distribute, sublicense, and/or sell copies of the Software, and to
-** permit persons to whom the Software is furnished to do so, subject to
-** the following conditions:
-** 
-** The above copyright notice and this permission notice shall be
-** included in all copies or substantial portions of the Software.
-** 
-** THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-** SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
 /**
  * Module dependencies.
  */
@@ -33,9 +8,9 @@ var sfdc = require('sfdc-node')
 var app = module.exports = express.createServer();
 
 //OAuth Configuration
-var clientId = 'Add Client Id from Setup->Develop->Remote Access';
-var clientSecret = 'Add Client Secret from Setup->Deveop->Remote Accesss';
-var redirectUri = 'http://localhost:5000/auth-callback';
+var clientId = '3MVG9xOCXq4ID1uHr0J.ynWNI9RHtksRKnL6tt4zjCtvU9afG.yownf68Y4Si2ZIWcR.1PzYSPY8CnArIxLU8';
+var clientSecret = '3154713344263535770';
+var redirectUri = 'http://localhost:3000/auth-callback';
 
 //These are set after authorize is called
 var token;
@@ -56,13 +31,13 @@ app.configure(function(){
 	sfdc.configureCallback(app, '/auth-callback',redirectUri, function(access_token, refresh_token, results, response){
 		//use this call back method to perform any custom code after the authorziation process eg display a landing page
 		
-		//set the token, instnace, and code that is returned after the authorization calls to sfdc
+		//set the token, instance, and code that is returned after the authorization calls to sfdc
 		//console.log(results);
 		token = access_token
 		instance = results.instance_url;
 		rtoken = refresh_token;
-				
-		response.redirect('/create/lead');
+		console.log(token+'####'+instance+'####'+rtoken);		
+		response.redirect('/query');
 	});
 });
 
@@ -78,7 +53,7 @@ app.configure('production', function(){
 // Routes
 app.get('/', function(req, res){
   res.render('index', {
-    title: 'Salesforce Node.js Sample'
+    title: 'Welcome to Norway Post'
   });
 });
 
@@ -210,17 +185,21 @@ app.post('/delete/:sobject', function(req,res){
 //query
 app.get('/query', function(req, res){
 	res.render('query', {
-		title: 'Query'
+		title: 'Shipment Tracking System'
 	});
 });
 
 app.post('/query', function(req, res){
 	var query = req.param('query');
-	sfdc.query(query,token, instance,  function(results){
+	console.log('Id'+query);
+	var queryfull="Select Name,Account_Name__c,Description__c,Expected_Delivery_Date__c,Item_code__c,Shipped_From__c,Shipped_To__c,Status__c from Shipment_Details__c where Name='"+query+"'";
+	console.log('Query Full'+queryfull);
+	sfdc.query(queryfull,token, instance,  function(results){
 		var recs =renderGridData(results);
-		
+		console.log('Query'+JSON.stringify(query));
+		console.log('Results'+JSON.stringify(recs));
 		res.render('queryresults', {
-			title:'Results for Query: '+query,
+			title:'Results for Shipment Id: '+query,
 			records: recs
 			});
 	});
