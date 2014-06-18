@@ -3,7 +3,7 @@
  */
 
 var express = require('express');
-var sfdc = require('sfdc-node')
+var sfdc = require('sfdc-node');
 
 var app = module.exports = express.createServer();
 
